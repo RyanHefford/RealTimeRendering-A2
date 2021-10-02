@@ -9,6 +9,7 @@ out vec4 f_FragColor;
 in VertexData {
     vec3 FragPos;
     vec3 Normal;
+    vec2 TexCoord;
 } fs_in;
 
 struct RTRCamera {
@@ -40,7 +41,7 @@ struct RTRLight {
 
 struct RTRMaterial {
     vec3 Ambient;
-    vec3 Diffuse;
+    sampler2D Diffuse;
     vec3 Specular;
     float Shininess;
 };
@@ -55,6 +56,8 @@ uniform RTRMaterial u_ObjectMaterial;
 uniform RTRCamera   u_Camera;
 
 uniform float u_CurTime;
+
+uniform sampler2D u_MetalTexture;
 
 void main() 
 {
@@ -85,7 +88,7 @@ void main()
         }
         L = normalize(L);
         float d = max(dot(N, L), 0.0);
-        vec3 diffuse = u_Lights[cur_light].Diffuse * u_ObjectMaterial.Diffuse * d;
+        vec3 diffuse = u_Lights[cur_light].Diffuse * vec3(texture(u_ObjectMaterial.Diffuse, fs_in.TexCoord)) * d;
     
         // calc specular
         vec3 V = normalize(u_Camera.Position - fs_in.FragPos);
@@ -101,5 +104,8 @@ void main()
     }
     
     f_FragColor = vec4(final_color, 1.0);
+    //f_FragColor = texture(u_MetalTexture, fs_in.TexCoord);
+    //f_FragColor = vec4(fs_in.TexCoord.xy, 0, 1.0);
+    
 }
 

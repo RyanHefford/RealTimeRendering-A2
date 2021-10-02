@@ -24,13 +24,18 @@ int MainApp::Init()
         return -1;
     }
 
-    m_PlasmaShader = new RTRShader();
-    if (m_PlasmaShader->Load("Src/RTRPlasma.vert", "Src/RTRPlasma.frag") != 0) {
+    //m_PlasmaShader = new RTRShader();
+    //if (m_PlasmaShader->Load("Src/RTRPlasma.vert", "Src/RTRPlasma.frag") != 0) {
+        //return -1;
+    //}
+
+    /*m_SkyboxShader = new RTRShader();
+    if (m_SkyboxShader->Load("Src/RTRSkybox.vert", "Src/RTRSkybox.frag") != 0) {
         return -1;
-    }
+    }*/
 
     // Create and initialise camera
-    m_Camera = new RTRCamera(glm::vec3(1.5, 2.0, 10.0), glm::vec3(0.0, 1.0, 0.0));
+    m_Camera = new RTRCamera(glm::vec3(0, 0, 5.0), glm::vec3(0.0, 1.0, 0.0));
 
     // Create and initialise lighting model
     m_LightingModel = new RTRLightingModel();
@@ -109,11 +114,16 @@ int MainApp::Init()
 
     // Create two cube objects
     // You might want to maintain a vector of objects for your assignment
-    m_Cube = new RTRCube();
-    m_Cube->Init();
+    m_TableModel = new RTRTableModel(1.5, 2);
+
+    //m_Cube = new RTRCube(glm::vec3(0, 0, 0), m_Texture->m_Id);
+    //m_Cube->Init();
     
-    m_PlasmaCube = new RTRCube();
-    m_PlasmaCube->Init();
+    /*m_PlasmaCube = new RTRCube(glm::vec3(0, 0, 0));
+    m_PlasmaCube->Init();*/
+
+    /*m_SkyboxCube = new RTRCube();
+    m_SkyboxCube->Init();*/
 
     // Create and initialise the debug console/overlay
     m_Console = new Console();
@@ -124,10 +134,13 @@ int MainApp::Init()
 
 void MainApp::Done()
 {
-    m_Cube->End(); delete m_Cube;
-    m_PlasmaCube->End(); delete m_PlasmaCube;
+    m_TableModel->End(); delete m_TableModel;
+    //m_Cube->End(); delete m_Cube;
+    //m_PlasmaCube->End(); delete m_PlasmaCube;
+    //m_SkyboxCube->End(); delete m_SkyboxCube;
     m_Console->End(); delete m_Console;
-    delete m_PlasmaShader;
+    //delete m_SkyboxShader;
+    //delete m_PlasmaShader;
     delete m_DefaultShader;
     RTRApp::Done();
 }
@@ -205,7 +218,7 @@ void MainApp::RenderFrame()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the plasma cube using the plasma shader
-    glUseProgram(m_PlasmaShader->GetId());
+    /*glUseProgram(m_PlasmaShader->GetId());
     m_PlasmaShader->SetFloat("u_CurTime", (float)m_CurTime);
     m_PlasmaShader->SetFloat("u_TimeDelta", (float)m_TimeDelta);
     m_PlasmaShader->SetMat4("u_ModelMatrix", m_ModelMatrix);
@@ -213,22 +226,31 @@ void MainApp::RenderFrame()
     m_PlasmaShader->SetMat4("u_ProjectionMatrix", m_ProjectionMatrix);
     m_PlasmaShader->SetCamera("u_Camera", *m_Camera);
     m_PlasmaShader->SetLightingModel(*m_LightingModel);
-    m_PlasmaCube->Render(m_PlasmaShader);
+    m_PlasmaCube->Render(m_PlasmaShader);*/
 
     // Render the shaded cube using the default blinn-phong shader
     glUseProgram(m_DefaultShader->GetId());
     m_DefaultShader->SetFloat("u_CurTime", (float)m_CurTime);
     m_DefaultShader->SetFloat("u_TimeDelta", (float)m_TimeDelta);
-    //m_DefaultShader->SetMat4("u_ModelMatrix", m_ModelMatrix);
     m_DefaultShader->SetMat4("u_ViewMatrix", m_ViewMatrix);
     m_DefaultShader->SetMat4("u_ProjectionMatrix", m_ProjectionMatrix);
     m_DefaultShader->SetCamera("u_Camera", *m_Camera);
     m_DefaultShader->SetLightingModel(*m_LightingModel);
 
-    m_ModelMatrix = glm::translate(m_ModelMatrix, glm::vec3(3.0, 0.0, 0.0));
-    m_DefaultShader->SetMat4("u_ModelMatrix", m_ModelMatrix);
-    m_Cube->Render(m_DefaultShader);
+    //m_ModelMatrix = m_Cube->m_ModelMatrix;
+    //m_DefaultShader->SetMat4("u_ModelMatrix", m_ModelMatrix);
+    m_TableModel->RenderTable(m_DefaultShader);
+    //m_Cube->Render(m_DefaultShader);
     
+    // Render Skybox
+    /*glUseProgram(m_SkyboxShader->GetId());
+    m_SkyboxShader->SetMat4("u_ViewMatrix", m_ViewMatrix);
+    m_SkyboxShader->SetMat4("u_ProjectionMatrix", m_ProjectionMatrix);
+    m_SkyboxShader->SetCamera("u_Camera", *m_Camera);
+    m_SkyboxShader->SetMat4("u_ModelMatrix", m_ModelMatrix);
+    m_SkyboxCube->Render(m_SkyboxShader);*/
+    
+
     // Print out all debug info
     m_Console->Render("DEBUG", m_FPS,
         m_Camera->m_Position.x, m_Camera->m_Position.y, m_Camera->m_Position.z,

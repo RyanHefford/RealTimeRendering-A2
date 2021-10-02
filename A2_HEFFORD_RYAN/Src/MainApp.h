@@ -12,6 +12,8 @@
 #include "RTRLighting.h"
 #include "RTRObject.h"
 #include "Console.h"
+#include "RTRTableModel.h"
+#include "RTRTexture.h"
 
 class MainApp : public RTRApp
 {
@@ -26,11 +28,15 @@ public:
 private:
     bool m_QuitApp{ false };
     RTRShader* m_DefaultShader{ nullptr };
-    RTRShader* m_PlasmaShader{ nullptr };
+    //RTRShader* m_PlasmaShader{ nullptr };
+    //RTRShader* m_SkyboxShader{ nullptr };
     RTRCamera* m_Camera{ nullptr };
     RTRLightingModel* m_LightingModel{ nullptr };
+    RTRTableModel* m_TableModel;
+
     RTRObject* m_Cube{ nullptr };
-    RTRObject* m_PlasmaCube{ nullptr };
+    //RTRObject* m_PlasmaCube{ nullptr };
+    //RTRObject* m_SkyboxCube{ nullptr };
     Console* m_Console{ nullptr };
 
     bool m_MovingForward{ false };

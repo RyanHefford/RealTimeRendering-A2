@@ -36,6 +36,18 @@
     <ClCompile Include="Src\RTRObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\RTRTableModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\TableEntity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\RTRTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\RTRCubeMapTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\RTRApp.h">
@@ -59,6 +71,18 @@
     <ClInclude Include="Src\RTRCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Src\RTRTableModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\TableEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RTRTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\RTRCubeMapTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\RTRDefault.vert">
@@ -76,5 +100,19 @@
     <None Include="Src\RTRPlasma.vert">
       <Filter>Shader Files</Filter>
     </None>
+    <None Include="Src\RTRSkybox.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="Src\RTRSkybox.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Src\MetalTexture.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Src\PaintedWoodTexture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

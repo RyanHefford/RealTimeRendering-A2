@@ -20,20 +20,28 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Include\glad\glad.c" />
+    <ClCompile Include="Src\RTRCubeMapTexture.cpp" />
     <ClCompile Include="Src\RTRObject.cpp" />
     <ClCompile Include="Src\Console.cpp" />
     <ClCompile Include="Src\RTRApp.cpp" />
     <ClCompile Include="Src\MainApp.cpp" />
     <ClCompile Include="Src\RTRShader.cpp" />
+    <ClCompile Include="Src\RTRTableModel.cpp" />
+    <ClCompile Include="Src\RTRTexture.cpp" />
+    <ClCompile Include="Src\TableEntity.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\RTRCamera.h" />
+    <ClInclude Include="Src\RTRCubeMapTexture.h" />
     <ClInclude Include="Src\RTRObject.h" />
     <ClInclude Include="Src\Console.h" />
     <ClInclude Include="Src\MainApp.h" />
     <ClInclude Include="Src\RTRApp.h" />
     <ClInclude Include="Src\RTRLighting.h" />
     <ClInclude Include="Src\RTRShader.h" />
+    <ClInclude Include="Src\RTRTableModel.h" />
+    <ClInclude Include="Src\RTRTexture.h" />
+    <ClInclude Include="Src\TableEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\RTRDefault.frag">
@@ -66,6 +74,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
+    <None Include="Src\RTRSkybox.frag" />
+    <None Include="Src\RTRSkybox.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Src\MetalTexture.jpg" />
+    <Image Include="Src\PaintedWoodTexture.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
