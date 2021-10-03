@@ -24,7 +24,7 @@ struct RTRTexCoord_t {
 class RTRObject
 {
 public:
-    RTRObject(glm::vec3 position, unsigned int texId);
+    RTRObject(unsigned int texId, glm::vec3 position = { 0,0,0 });
     ~RTRObject() {}
     virtual void Init();
     virtual void Render(RTRShader* shader);
@@ -66,7 +66,7 @@ public:
 class RTRCube : public RTRObject
 {
 public:
-    RTRCube(glm::vec3 position, unsigned int texId) : RTRObject(position, texId) {}
+    RTRCube(glm::vec3 position, unsigned int texId) : RTRObject(texId, position) {}
     ~RTRCube() {}
     virtual void Init();
     virtual const char* GetName() { return "RTRCube"; }
@@ -76,7 +76,7 @@ public:
 class RTRPlane : public RTRObject
 {
 public:
-    RTRPlane(glm::vec3 position, unsigned int texId) : RTRObject(position, texId) {}
+    RTRPlane(glm::vec3 position, unsigned int texId) : RTRObject(texId, position) {}
 
     ~RTRPlane() {}
     virtual void Init();

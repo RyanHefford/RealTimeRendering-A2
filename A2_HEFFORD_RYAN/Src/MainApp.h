@@ -29,7 +29,7 @@ private:
     bool m_QuitApp{ false };
     RTRShader* m_DefaultShader{ nullptr };
     //RTRShader* m_PlasmaShader{ nullptr };
-    //RTRShader* m_SkyboxShader{ nullptr };
+    RTRShader* m_SkyboxShader{ nullptr };
     RTRCamera* m_Camera{ nullptr };
     RTRLightingModel* m_LightingModel{ nullptr };
     RTRTableModel* m_TableModel;

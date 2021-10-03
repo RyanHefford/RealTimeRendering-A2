@@ -11,7 +11,7 @@ out VertexData {
 } vs_out;
 
 void main() {
-    vs_out.TexCoord = a_Position;
+    vs_out.TexCoord = vec3(u_ModelMatrix * vec4(a_Position, 1.0));
     vec4 pos = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
     gl_Position = pos.xyww;
 }

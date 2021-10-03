@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <iostream>
 #include "RTRShader.h"
+#include <fstream>
+#include <sstream>
 
 static char *load_shader_file(const char *filename)
 {
@@ -24,85 +26,117 @@ static char *load_shader_file(const char *filename)
 
 int RTRShader::Load(const char *vert_path, const char *frag_path, const char *geom_path)
 {
-    int ret_code = 0;
-    char *vert_src = nullptr, *frag_src = nullptr, *geom_src = nullptr;
-    unsigned int vert_shader = 0, frag_shader = 0, geom_shader = 0;
+	//getting source files
+	std::string vertCode;
+	std::string fragCode;
+	std::string geomCode;
+	std::ifstream vsFile;
+	std::ifstream fsFile;
+	std::ifstream gsFile;
+	//error handling
+	vsFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	fsFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	gsFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try
+	{
+		//open files
+		vsFile.open(vert_path);
+		fsFile.open(frag_path);
+		if (geom_path != nullptr) { gsFile.open(geom_path); };
+		std::stringstream vsStream, fsStream, gsStream;
 
-    if (vert_path != nullptr && (vert_src = load_shader_file(vert_path)) == nullptr) {
-        std::cout << "RTR:ERROR:RTR_Shader:Could not load vertex shader file - " << vert_path << std::endl;
-        ret_code = -1;
-        goto ERR_RTR_SHADER_LOAD;
-    }
-    if (frag_path != nullptr && (frag_src = load_shader_file(frag_path)) == nullptr) {
-        std::cout << "RTR:ERROR:RTR_Shader:Could not load fragment shader file - " << frag_path << std::endl;
-        ret_code = -2;
-        goto ERR_RTR_SHADER_LOAD;
-    }
-    if (geom_path != nullptr && (geom_src = load_shader_file(geom_path)) == nullptr) {
-        std::cout << "RTR:ERROR:RTR_Shader:Could not load geometry shader file - " << geom_path << std::endl;
-        ret_code = -3;
-        goto ERR_RTR_SHADER_LOAD;
-    }
+		//read into streams
+		vsStream << vsFile.rdbuf();
+		fsStream << fsFile.rdbuf();
+		if (geom_path != nullptr) { gsStream << gsFile.rdbuf(); };
+		//close files
+		vsFile.close();
+		fsFile.close();
+		if (geom_path != nullptr) { gsFile.close(); };
 
-    int err_ok;
-    char err_info[512];
+		//Convert stream into string
+		vertCode = vsStream.str();
+		fragCode = fsStream.str();
+		if (geom_path != nullptr) { geomCode = gsStream.str(); };
+	}
+	catch (std::ifstream::failure e)
+	{
+		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+	}
+	const char* vShaderCode = vertCode.c_str();
+	const char* fShaderCode = fragCode.c_str();
+	const char* gShaderCode = geomCode.c_str();
 
-    if (vert_src != nullptr) {
-        vert_shader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vert_shader, 1, &vert_src, nullptr);
-        glCompileShader(vert_shader);
-        glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &err_ok);
-        if (!err_ok) {
-            glGetShaderInfoLog(vert_shader, 512, nullptr, err_info);
-            std::cout << "RTR:ERROR: Vertex Shader failed to compile. Error: " << err_info << std::endl;
-            ret_code = -4;
-            goto ERR_RTR_SHADER_LOAD;
-        }
-    }
-    if (frag_src != nullptr) {
-        frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(frag_shader, 1, &frag_src, nullptr);
-        glCompileShader(frag_shader);
-        glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &err_ok);
-        if (!err_ok) {
-            glGetShaderInfoLog(frag_shader, 512, nullptr, err_info);
-            std::cout << "RTR:ERROR: Fragment Shader failed to compile. Error: " << err_info << std::endl;
-            ret_code = -5;
-            goto ERR_RTR_SHADER_LOAD;
-        }
-    }
-    if (geom_src != nullptr) {
-        geom_shader = glCreateShader(GL_GEOMETRY_SHADER);
-        glShaderSource(geom_shader, 1, &geom_src, nullptr);
-        glCompileShader(geom_shader);
-        glGetShaderiv(geom_shader, GL_COMPILE_STATUS, &err_ok);
-        if (!err_ok) {
-            glGetShaderInfoLog(geom_shader, 512, nullptr, err_info);
-            std::cout << "RTR:ERROR: Geometry Shader failed to compile. Error: " << err_info << std::endl;
-            ret_code = -6;
-            goto ERR_RTR_SHADER_LOAD;
-        }
-    }
+	//compile shaders
+	unsigned int vertex, fragment, geometry;
+	int success;
+	char infoLog[512];
+	//vertex Shader
+	vertex = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertex, 1, &vShaderCode, nullptr);
+	glCompileShader(vertex);
 
-    m_Id = glCreateProgram();
-    if (vert_shader != 0) glAttachShader(m_Id, vert_shader);
-    if (frag_shader != 0) glAttachShader(m_Id, frag_shader);
-    if (geom_shader != 0) glAttachShader(m_Id, geom_shader);
-    glLinkProgram(m_Id);
-    glGetProgramiv(m_Id, GL_LINK_STATUS, &err_ok);
-    if (!err_ok) {
-        glGetProgramInfoLog(m_Id, 512, NULL, err_info);
-        std::cout << "RTR:ERROR: Shader Program failed to link. Error: " << err_info << std::endl;
-        ret_code = -7;
-        goto ERR_RTR_SHADER_LOAD;
-    }
+	//print errors if need
+	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
+			infoLog << std::endl;
+	};
 
-ERR_RTR_SHADER_LOAD:
-    if (vert_shader != 0) glDeleteShader(vert_shader);
-    if (frag_shader != 0) glDeleteShader(frag_shader);
-    if (geom_shader != 0) glDeleteShader(geom_shader);
-    if (vert_src != nullptr) delete vert_src;
-    if (frag_src != nullptr) delete frag_src;
-    if (geom_src != nullptr) delete geom_src;
-    return ret_code;
+
+
+	//same for fs
+	fragment = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragment, 1, &fShaderCode, nullptr);
+	glCompileShader(fragment);
+
+	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(fragment, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<
+			infoLog << std::endl;
+	};
+
+	if (gShaderCode != nullptr) {
+		//and geom shader
+		geometry = glCreateShader(GL_GEOMETRY_SHADER);
+		glShaderSource(geometry, 1, &gShaderCode, nullptr);
+		glCompileShader(geometry);
+
+		glGetShaderiv(geometry, GL_COMPILE_STATUS, &success);
+		if (!success)
+		{
+			glGetShaderInfoLog(geometry, 512, NULL, infoLog);
+			std::cout << "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED\n" <<
+				infoLog << std::endl;
+		};
+	}
+
+	//shader Program
+	m_Id = glCreateProgram();
+	glAttachShader(m_Id, vertex);
+	if (geom_path != nullptr) { glAttachShader(m_Id, geometry); };
+	glAttachShader(m_Id, fragment);
+	glLinkProgram(m_Id);
+
+
+	//linking errors
+	glGetProgramiv(m_Id, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		glGetProgramInfoLog(m_Id, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" <<
+			infoLog << std::endl;
+	}
+
+
+	//delete all shaders
+	glDeleteShader(vertex);
+	glDeleteShader(fragment);
+	glDeleteShader(geometry);
+
+	return success == -1;
 }

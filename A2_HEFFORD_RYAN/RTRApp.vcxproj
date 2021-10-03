@@ -28,6 +28,7 @@
     <ClCompile Include="Src\RTRShader.cpp" />
     <ClCompile Include="Src\RTRTableModel.cpp" />
     <ClCompile Include="Src\RTRTexture.cpp" />
+    <ClCompile Include="Src\RTRSkyBox.cpp" />
     <ClCompile Include="Src\TableEntity.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +42,7 @@
     <ClInclude Include="Src\RTRShader.h" />
     <ClInclude Include="Src\RTRTableModel.h" />
     <ClInclude Include="Src\RTRTexture.h" />
+    <ClInclude Include="Src\RTRSkyBox.h" />
     <ClInclude Include="Src\TableEntity.h" />
   </ItemGroup>
   <ItemGroup>

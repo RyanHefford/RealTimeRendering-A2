@@ -41,6 +41,19 @@ RTRTableModel::RTRTableModel(float _width, float _height)
 	//add backboard
 	tableParts[numParts] = new Backboard(halfWidth, halfHeight, backboardTexture->m_Id);
 	numParts++;
+
+	//add skybox
+	// order of files matches GL_TEXTURE_CUBE_MAP_XXX id order
+	const char* skyBoxPath[] = {
+		".\\Resources\\Textures\\Skybox\\posx.jpg", 
+		".\\Resources\\Textures\\Skybox\\negx.jpg",
+		".\\Resources\\Textures\\Skybox\\posy.jpg",
+		".\\Resources\\Textures\\Skybox\\negy.jpg",
+		".\\Resources\\Textures\\Skybox\\posz.jpg",
+		".\\Resources\\Textures\\Skybox\\negz.jpg",
+	};
+	skyBoxTexture = new RTRCubeMapTexture(skyBoxPath);
+	skyBox = new RTRSkyBox(skyBoxTexture->m_Id);
 }
 
 RTRTableModel::~RTRTableModel()
@@ -58,4 +71,9 @@ void RTRTableModel::RenderTable(RTRShader* shader)
 	{
 		tableParts[i]->RenderGeometry(shader);
 	}
+}
+
+void RTRTableModel::RenderSkyBox(RTRShader* shader)
+{
+	skyBox->Render(shader);
 }

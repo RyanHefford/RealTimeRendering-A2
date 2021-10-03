@@ -29,10 +29,10 @@ int MainApp::Init()
         //return -1;
     //}
 
-    /*m_SkyboxShader = new RTRShader();
+    m_SkyboxShader = new RTRShader();
     if (m_SkyboxShader->Load("Src/RTRSkybox.vert", "Src/RTRSkybox.frag") != 0) {
         return -1;
-    }*/
+    }
 
     // Create and initialise camera
     m_Camera = new RTRCamera(glm::vec3(0, 0, 5.0), glm::vec3(0.0, 1.0, 0.0));
@@ -139,7 +139,7 @@ void MainApp::Done()
     //m_PlasmaCube->End(); delete m_PlasmaCube;
     //m_SkyboxCube->End(); delete m_SkyboxCube;
     m_Console->End(); delete m_Console;
-    //delete m_SkyboxShader;
+    delete m_SkyboxShader;
     //delete m_PlasmaShader;
     delete m_DefaultShader;
     RTRApp::Done();
@@ -214,7 +214,7 @@ void MainApp::UpdateState(unsigned int td_milli)
 
 void MainApp::RenderFrame()
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render the plasma cube using the plasma shader
@@ -243,12 +243,12 @@ void MainApp::RenderFrame()
     //m_Cube->Render(m_DefaultShader);
     
     // Render Skybox
-    /*glUseProgram(m_SkyboxShader->GetId());
-    m_SkyboxShader->SetMat4("u_ViewMatrix", m_ViewMatrix);
+    glUseProgram(m_SkyboxShader->GetId());
+    glm::mat4 skyBoxView = glm::mat4(glm::mat3(m_Camera->GetViewMatrix()));
+    m_SkyboxShader->SetMat4("u_ViewMatrix", skyBoxView);
     m_SkyboxShader->SetMat4("u_ProjectionMatrix", m_ProjectionMatrix);
-    m_SkyboxShader->SetCamera("u_Camera", *m_Camera);
     m_SkyboxShader->SetMat4("u_ModelMatrix", m_ModelMatrix);
-    m_SkyboxCube->Render(m_SkyboxShader);*/
+    m_TableModel->RenderSkyBox(m_SkyboxShader);
     
 
     // Print out all debug info

@@ -1,6 +1,7 @@
 #pragma once
 #include "TableEntity.h"
-
+#include "RTRSkyBox.h"
+#include "RTRCubeMapTexture.h"
 
 class RTRTableModel {
 public:
@@ -10,6 +11,7 @@ public:
 	void End();
 
 	void RenderTable(RTRShader* shader);
+	void RenderSkyBox(RTRShader* shader);
 
 private:
 	float width;
@@ -20,5 +22,6 @@ private:
 	TableEntity* tableParts[30];
 	RTRTexture* metalTexture;
 	RTRTexture* backboardTexture;
-
+	RTRCubeMapTexture* skyBoxTexture;
+	RTRSkyBox* skyBox;
 };

@@ -15,7 +15,7 @@
 // * For this assignment you can hardcode the vertex buffers for the differnet shapes (see cube) and then 
 // scale, place and animate them with transformation matrices.
 
-RTRObject::RTRObject(glm::vec3 position, unsigned int texId)
+RTRObject::RTRObject(unsigned int texId, glm::vec3 position)
 {
     m_ModelMatrix = glm::translate(m_ModelMatrix, position);
     m_TextureId = texId;
@@ -110,7 +110,7 @@ void RTRCube::Init()
 }
 
 
-RTRRectangle::RTRRectangle(float _width, float _height, float _depth, glm::vec3 position, unsigned int texId, glm::vec3 rotation, float rotationAngleInRadians) : RTRObject(position, texId)
+RTRRectangle::RTRRectangle(float _width, float _height, float _depth, glm::vec3 position, unsigned int texId, glm::vec3 rotation, float rotationAngleInRadians) : RTRObject(texId, position)
 {
     if (rotationAngleInRadians != 0) { m_ModelMatrix = glm::rotate(m_ModelMatrix, rotationAngleInRadians, rotation); }
     m_ModelMatrix = glm::scale(m_ModelMatrix, glm::vec3(_width, _height, _depth));

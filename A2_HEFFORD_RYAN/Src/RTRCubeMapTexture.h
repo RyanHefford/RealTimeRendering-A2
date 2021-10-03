@@ -6,9 +6,9 @@
 
 class RTRCubeMapTexture {
 public:
-	RTRCubeMapTexture(const char* path) { LoadTexture(path); }
+	RTRCubeMapTexture(const char** path) { LoadTexture(path); }
 	~RTRCubeMapTexture();
-	void LoadTexture(const char* path);
+	void LoadTexture(const char** path);
 
 	unsigned int m_Id;
 	int width, height, nrChannels;
