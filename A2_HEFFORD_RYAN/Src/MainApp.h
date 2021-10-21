@@ -7,13 +7,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "RTRApp.h"
-#include "RTRShader.h"
 #include "RTRCamera.h"
-#include "RTRLighting.h"
-#include "RTRObject.h"
 #include "Console.h"
 #include "RTRTableModel.h"
-#include "RTRTexture.h"
 
 class MainApp : public RTRApp
 {
@@ -28,15 +24,12 @@ public:
 private:
     bool m_QuitApp{ false };
     RTRShader* m_DefaultShader{ nullptr };
-    //RTRShader* m_PlasmaShader{ nullptr };
     RTRShader* m_SkyboxShader{ nullptr };
     RTRCamera* m_Camera{ nullptr };
     RTRLightingModel* m_LightingModel{ nullptr };
     RTRTableModel* m_TableModel;
 
     RTRObject* m_Cube{ nullptr };
-    //RTRObject* m_PlasmaCube{ nullptr };
-    //RTRObject* m_SkyboxCube{ nullptr };
     Console* m_Console{ nullptr };
 
     bool m_MovingForward{ false };
@@ -47,6 +40,7 @@ private:
     bool m_StrafingRight{ false };
     bool m_TiltingUp{ false };
     bool m_TiltingDown{ false };
+    bool m_IncreasePower{ false };
 
     glm::mat4 m_ModelMatrix{ 1.0 };
     glm::mat4 m_ViewMatrix{ 1.0 };

@@ -4,7 +4,7 @@
 
 class RTRSkyBox : RTRObject{
 public:
-    RTRSkyBox(unsigned int texId);
+    RTRSkyBox(RTRMaterial_t* material);
     ~RTRSkyBox() {}
     virtual void Init();
     virtual void Render(RTRShader* shader);

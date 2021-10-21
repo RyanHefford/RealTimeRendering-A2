@@ -25,6 +25,11 @@ struct RTRCamera {
 #define RTRPointLight          1
 #define RTRSpotLight           2
 
+#define RTRBasicMaterial       0
+#define RTRTexturedMaterial    1
+#define RTRReflectiveMaterial  2
+#define RTRGlassMaterial       3
+
 struct RTRLight {
     int Type;
     vec3 Ambient;
@@ -39,11 +44,17 @@ struct RTRLight {
     float OuterCutoff;
 };
 
-struct RTRMaterial {
-    vec3 Ambient;
-    sampler2D Diffuse;
-    vec3 Specular;
-    float Shininess;
+struct RTRMaterial
+{
+    int Type;               // Used by material type
+    vec3 Ambient;           // Basic, Textured, Reflective, Glass
+    vec3 Diffuse;           // Basic, Textured, Reflective, Glass
+    vec3 Specular;          // Basic, Textured, Reflective, Glass
+    float Shininess;        // Basic, Textured, Reflective, Glass
+    sampler2D DiffuseMap;   // Textured, Reflective, Glass
+    sampler2D SpecularMap;  // Textured, Reflective, Glass
+    sampler2D ReflectionMap;// Reflective, Glass
+    float RefractiveIndex;  // Glass
 };
 
 uniform mat4 u_ModelMatrix;
@@ -57,7 +68,7 @@ uniform RTRCamera   u_Camera;
 
 uniform float u_CurTime;
 
-uniform sampler2D u_MetalTexture;
+uniform samplerCube u_SkyBox;
 
 void main() 
 {
@@ -88,7 +99,12 @@ void main()
         }
         L = normalize(L);
         float d = max(dot(N, L), 0.0);
-        vec3 diffuse = u_Lights[cur_light].Diffuse * vec3(texture(u_ObjectMaterial.Diffuse, fs_in.TexCoord)) * d;
+        vec3 diffuse;
+        if(u_ObjectMaterial.Type == RTRBasicMaterial){
+            diffuse = u_Lights[cur_light].Diffuse * diffuse * d;
+        }else{
+            diffuse = u_Lights[cur_light].Diffuse * vec3(texture(u_ObjectMaterial.DiffuseMap, fs_in.TexCoord)) * d;
+        }
     
         // calc specular
         vec3 V = normalize(u_Camera.Position - fs_in.FragPos);
@@ -98,9 +114,34 @@ void main()
         // Blinn-Phong
         vec3 H = normalize(L + V);
         float s = pow(max(dot(N, H), 0.0), u_ObjectMaterial.Shininess);
-        vec3 specular = u_Lights[cur_light].Specular * u_ObjectMaterial.Specular * s;
+        vec3 specular;
+        if(u_ObjectMaterial.Type == RTRBasicMaterial){
+            specular = u_Lights[cur_light].Specular * u_ObjectMaterial.Specular * s;
+        }else{
+            specular = u_Lights[cur_light].Specular * vec3(texture(u_ObjectMaterial.SpecularMap, fs_in.TexCoord)) * s;
+        }
 
-        final_color += (ambient + attenuation*(diffuse + specular));
+        //Check if reflections need to be calculated
+        if(u_ObjectMaterial.Type >= RTRReflectiveMaterial){
+            vec3 reflection;
+
+            vec3 I = normalize(fs_in.FragPos - u_Camera.Position);
+            vec3 R = reflect(I, normalize(fs_in.Normal));
+
+            //check if glass material
+            if(u_ObjectMaterial.Type == RTRGlassMaterial){
+                float glass_ratio = 1 / u_ObjectMaterial.RefractiveIndex;
+                R = refract(I, normalize(fs_in.Normal), 1 / glass_ratio);
+            }
+
+            reflection = vec3(texture(u_SkyBox, R) * texture(u_ObjectMaterial.ReflectionMap, fs_in.TexCoord));
+            //reflection = texture(u_SkyBox, R).rgb;
+            //final_color += reflection;
+            final_color += (ambient + attenuation*(diffuse + specular + reflection));
+        }else{
+            final_color += (ambient + attenuation*(diffuse + specular));
+        }
+
     }
     
     f_FragColor = vec4(final_color, 1.0);

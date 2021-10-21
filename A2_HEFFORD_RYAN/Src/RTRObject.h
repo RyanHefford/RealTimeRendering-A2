@@ -7,6 +7,7 @@
 #include "RTRLighting.h"
 #include "RTRShader.h"
 #include "RTRTexture.h"
+#include <vector>
 
 struct RTRPoint_t {
     float x, y, z;
@@ -24,12 +25,12 @@ struct RTRTexCoord_t {
 class RTRObject
 {
 public:
-    RTRObject(unsigned int texId, glm::vec3 position = { 0,0,0 });
+    RTRObject(RTRMaterial_t* material, glm::vec3 position = { 0,0,0 });
     ~RTRObject() {}
     virtual void Init();
     virtual void Render(RTRShader* shader);
     virtual void End();
-    void SetMaterial(RTRMaterial_t mat) { m_Material = mat; }
+    void SetMaterial(RTRMaterial_t* mat) { m_Material = mat; }
     virtual const char* GetName() { return "RTRObject"; }
 
 public:
@@ -39,8 +40,7 @@ public:
     RTRPoint_t* m_VertexPoints{ nullptr };
     RTRFace_t* m_Faces{ nullptr };
     RTRTexCoord_t* m_TexCoords{ nullptr };
-    RTRMaterial_t m_Material{ {0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, 128.0 };//{0.19225, 0.19225, 0.19225 }, { 0.50754, 0.50754, 0.50754 }, { 0.508273, 0.508273, 0.508273 }, 128.0 };
-    unsigned int m_TextureId{ 0 };
+    RTRMaterial_t* m_Material;
     unsigned int m_VertexBuffer{ 0 };
     unsigned int m_VertexArray{ 0 };
     unsigned int m_TexCoordBuffer{ 0 };
@@ -53,7 +53,7 @@ public:
 class RTRRectangle : public RTRObject
 {
 public:
-    RTRRectangle(float _width, float _height, float _depth, glm::vec3 position, unsigned int texId, glm::vec3 rotation = glm::vec3(0), float rotationAngle = 0);
+    RTRRectangle(float _width, float _height, float _depth, glm::vec3 position, RTRMaterial_t* material, glm::vec3 rotation = glm::vec3(0), float rotationAngleInRadians = 0);
 
     ~RTRRectangle() {}
     virtual void Init();
@@ -63,11 +63,21 @@ public:
 
 
 //-----------------------------------------------------------------------------
-class RTRCube : public RTRObject
+class RTRCube : public RTRRectangle
 {
 public:
-    RTRCube(glm::vec3 position, unsigned int texId) : RTRObject(texId, position) {}
+    RTRCube(float scale, glm::vec3 position, RTRMaterial_t* material) : RTRRectangle(scale, scale, scale, position, material) {}
     ~RTRCube() {}
+    virtual void Init() { RTRRectangle::Init(); }
+    virtual const char* GetName() { return "RTRCube"; }
+};
+
+//-----------------------------------------------------------------------------
+class RTRTriangularPrism : public RTRObject
+{
+public:
+    RTRTriangularPrism(float _width, float _height, float _depth, glm::vec3 position, RTRMaterial_t* material, glm::vec3 rotation = glm::vec3(0), float rotationAngleInRadians = 0);
+    ~RTRTriangularPrism() {}
     virtual void Init();
     virtual const char* GetName() { return "RTRCube"; }
 };
@@ -76,10 +86,51 @@ public:
 class RTRPlane : public RTRObject
 {
 public:
-    RTRPlane(glm::vec3 position, unsigned int texId) : RTRObject(texId, position) {}
+    RTRPlane(glm::vec3 position, RTRMaterial_t* material) : RTRObject(material, position) {}
 
     ~RTRPlane() {}
     virtual void Init();
     virtual const char* GetName() { return "RTRPlane"; }
 
+};
+
+//-----------------------------------------------------------------------------
+class RTRSphere : public RTRObject
+{
+public:
+    RTRSphere(float _radius, unsigned int _rings, unsigned int _sectors, glm::vec3 position, RTRMaterial_t* material);
+
+    ~RTRSphere() {}
+    virtual void Init();
+    virtual const char* GetName() { return "RTRSphere"; }
+
+private:
+    std::vector<RTRPoint_t> tempPoints;
+    std::vector<RTRTexCoord_t> tempTexCoord;
+    std::vector<RTRFace_t> tempIndices;
+
+    float radius;
+    unsigned int rings;
+    unsigned int sectors;
+};
+
+
+//-----------------------------------------------------------------------------
+class RTRCylinder : public RTRObject
+{
+public:
+    RTRCylinder(float _radius, float _height, unsigned int _sectors, glm::vec3 position, RTRMaterial_t* material, glm::vec3 rotation = glm::vec3(0), float rotationAngleInRadians = 0);
+
+    ~RTRCylinder() {}
+    virtual void Init();
+    virtual const char* GetName() { return "RTRCylinder"; }
+
+private:
+    std::vector<RTRPoint_t> tempPoints;
+    std::vector<RTRTexCoord_t> tempTexCoord;
+    std::vector<RTRFace_t> tempIndices;
+
+    float radius;
+    float height;
+    unsigned int sectors;
 };

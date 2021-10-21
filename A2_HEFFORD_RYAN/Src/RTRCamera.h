@@ -37,6 +37,7 @@ public:
     void StrafeRight(unsigned int td_milli) { m_Position += m_Right * m_StrafeSpeed * (td_milli / 1000.0f); }
     void TurnLeft(unsigned int td_milli) { m_Yaw -= m_TurnSpeed * td_milli / 1000.0f; UpdateVectors(); }
     void TurnRight(unsigned int td_milli) { m_Yaw += m_TurnSpeed * td_milli / 1000.0f; UpdateVectors(); }
+    void AddYawAndPitch(float xOffset, float yOffset) { m_Yaw += xOffset; m_Pitch += yOffset; UpdateVectors();};
     void TiltUp(unsigned int td_milli) { m_Pitch += m_TiltSpeed * td_milli / 1000.0f; UpdateVectors(); }
     void TiltDown(unsigned int td_milli) { m_Pitch -= m_TiltSpeed * td_milli / 1000.0f; UpdateVectors(); }
 
@@ -55,6 +56,15 @@ public:
 
 private:
     void UpdateVectors() {
+
+        if (m_Pitch > 89.0f) {
+            m_Pitch = 89.0f;
+        }
+
+        if (m_Pitch < -89.0f) {
+            m_Pitch = -89.0f;
+        }
+
         glm::vec3 front;
         front.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
         front.y = sin(glm::radians(m_Pitch));

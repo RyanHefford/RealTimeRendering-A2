@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include "RTRLighting.h"
 #include "RTRCamera.h"
+#include <iostream>
 
 #define MAX_UNIFORM_NAME 128
 
@@ -63,10 +64,15 @@ public:
     void SetArrayStructMat4(const char* array_name, int array_index, const char* element_name, const glm::mat4& mat) { SetMat4(MakeArrayStructName(array_name, array_index, element_name), mat); }
 
     void SetMaterial(const char* name, RTRMaterial_t& mat) {
+        SetInt(MakeStructName(name, "Type"), (int)mat.Type);
         SetVec3(MakeStructName(name, "Ambient"), mat.Ambient);
         SetVec3(MakeStructName(name, "Diffuse"), mat.Diffuse);
         SetVec3(MakeStructName(name, "Specular"), mat.Specular);
         SetFloat(MakeStructName(name, "Shininess"), mat.Shininess);
+        SetInt(MakeStructName(name, "DiffuseMap"), mat.DiffuseMap->m_Id);
+        SetInt(MakeStructName(name, "SpecularMap"), mat.SpecularMap->m_Id);
+        SetInt(MakeStructName(name, "ReflectionMap"), mat.ReflectionMap->m_Id);
+        SetFloat(MakeStructName(name, "RefractiveIndex"), mat.RefractiveIndex);
     }
     void SetArrayMaterial(const char* name, int array_index, RTRMaterial_t& mat) {
         char full_name[MAX_UNIFORM_NAME+1];

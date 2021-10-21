@@ -26,7 +26,7 @@ void Console::End()
     delete m_String;
 }
 
-void Console::Render(const char *title, int fps, float pos_x, float pos_y, float pos_z, float pitch, float yaw)
+void Console::Render(const char *title, int fps, float pos_x, float pos_y, float pos_z, float pitch, float yaw, int numPinballs)
 {
     gltBeginDraw();
 
@@ -41,7 +41,8 @@ void Console::Render(const char *title, int fps, float pos_x, float pos_y, float
         "Cam Pos: %.2f, %.2f, %.2f\n"
         "Cam Yaw: %.2f\n"
         "Cam Pitch: %.2f\n"
-        , fps, pos_x, pos_y, pos_z, yaw, pitch);
+        "Num Pinballs: %.2i\n"
+        , fps, pos_x, pos_y, pos_z, yaw, pitch, numPinballs);
     gltSetText(s_glt_text, m_String);
     gltColor(0.5f, 0.5f, 0.5f, 1.0f);
     gltDrawText2D(s_glt_text, 10, 10, 2.0);

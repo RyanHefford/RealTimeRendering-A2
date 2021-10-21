@@ -5,12 +5,16 @@
 //-----------------------------------------------------------------------------
 #include "MainApp.h"
 #include "RTRShader.h"
-
+#include "glm/ext.hpp"
 int MainApp::Init()
 {
     if (int err = RTRApp::Init() != 0) {
         return err;
     }
+
+    //handle mouse show
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    SDL_ShowCursor(false);
 
     // Setup projection matrix and viewport transform. 
     // These won't need to change as we're not worrying about screen size changes for this assignment
@@ -24,18 +28,13 @@ int MainApp::Init()
         return -1;
     }
 
-    //m_PlasmaShader = new RTRShader();
-    //if (m_PlasmaShader->Load("Src/RTRPlasma.vert", "Src/RTRPlasma.frag") != 0) {
-        //return -1;
-    //}
-
     m_SkyboxShader = new RTRShader();
     if (m_SkyboxShader->Load("Src/RTRSkybox.vert", "Src/RTRSkybox.frag") != 0) {
         return -1;
     }
 
     // Create and initialise camera
-    m_Camera = new RTRCamera(glm::vec3(0, 0, 5.0), glm::vec3(0.0, 1.0, 0.0));
+    m_Camera = new RTRCamera(glm::vec3(0, 0, 2.5), glm::vec3(0.0, 1.0, 0.0));
 
     // Create and initialise lighting model
     m_LightingModel = new RTRLightingModel();
@@ -112,18 +111,11 @@ int MainApp::Init()
         .Quadratic = 0.44f
         });
 
-    // Create two cube objects
-    // You might want to maintain a vector of objects for your assignment
     m_TableModel = new RTRTableModel(1.5, 2);
 
-    //m_Cube = new RTRCube(glm::vec3(0, 0, 0), m_Texture->m_Id);
-    //m_Cube->Init();
-    
-    /*m_PlasmaCube = new RTRCube(glm::vec3(0, 0, 0));
-    m_PlasmaCube->Init();*/
 
-    /*m_SkyboxCube = new RTRCube();
-    m_SkyboxCube->Init();*/
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Create and initialise the debug console/overlay
     m_Console = new Console();
@@ -135,12 +127,8 @@ int MainApp::Init()
 void MainApp::Done()
 {
     m_TableModel->End(); delete m_TableModel;
-    //m_Cube->End(); delete m_Cube;
-    //m_PlasmaCube->End(); delete m_PlasmaCube;
-    //m_SkyboxCube->End(); delete m_SkyboxCube;
     m_Console->End(); delete m_Console;
     delete m_SkyboxShader;
-    //delete m_PlasmaShader;
     delete m_DefaultShader;
     RTRApp::Done();
 }
@@ -159,7 +147,7 @@ bool MainApp::Tick()
 void MainApp::CheckInput()
 {
     SDL_Event e;
-    if (SDL_PollEvent(&e)) {
+    while (SDL_PollEvent(&e)) {
         switch (e.type) {
             case SDL_QUIT: m_QuitApp = true; break;
             case SDL_KEYDOWN:
@@ -173,6 +161,7 @@ void MainApp::CheckInput()
                     case SDLK_RIGHT: m_TurningRight = true; break;
                     case SDLK_UP: m_TiltingUp = true; break;
                     case SDLK_DOWN: m_TiltingDown = true; break;
+                    case SDLK_SPACE: m_IncreasePower = true; break;
                 }
                 break;
             case SDL_KEYUP:
@@ -185,8 +174,19 @@ void MainApp::CheckInput()
                     case SDLK_RIGHT: m_TurningRight = false; break;
                     case SDLK_UP: m_TiltingUp = false; break;
                     case SDLK_DOWN: m_TiltingDown = false; break;
+                    case SDLK_SPACE: m_IncreasePower = false; break;
                 }
                 break;
+        }
+
+        //check for mouse movement
+        if (e.type == SDL_MOUSEMOTION) {
+
+            float xOffset = e.motion.xrel * 0.075f;
+            float yOffset = -e.motion.yrel * 0.075f;
+
+            m_Camera->AddYawAndPitch(xOffset, yOffset);
+
         }
     }
 }
@@ -210,23 +210,15 @@ void MainApp::UpdateState(unsigned int td_milli)
     m_ModelMatrix = glm::mat4(1.0f);
     m_ViewMatrix = m_Camera->GetViewMatrix();
 
+    //Update Physics
+    m_TableModel->UpdatePlunger(m_IncreasePower, td_milli);
+    m_TableModel->UpdateState(td_milli);
 }
 
 void MainApp::RenderFrame()
 {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Render the plasma cube using the plasma shader
-    /*glUseProgram(m_PlasmaShader->GetId());
-    m_PlasmaShader->SetFloat("u_CurTime", (float)m_CurTime);
-    m_PlasmaShader->SetFloat("u_TimeDelta", (float)m_TimeDelta);
-    m_PlasmaShader->SetMat4("u_ModelMatrix", m_ModelMatrix);
-    m_PlasmaShader->SetMat4("u_ViewMatrix", m_ViewMatrix);
-    m_PlasmaShader->SetMat4("u_ProjectionMatrix", m_ProjectionMatrix);
-    m_PlasmaShader->SetCamera("u_Camera", *m_Camera);
-    m_PlasmaShader->SetLightingModel(*m_LightingModel);
-    m_PlasmaCube->Render(m_PlasmaShader);*/
 
     // Render the shaded cube using the default blinn-phong shader
     glUseProgram(m_DefaultShader->GetId());
@@ -236,12 +228,14 @@ void MainApp::RenderFrame()
     m_DefaultShader->SetMat4("u_ProjectionMatrix", m_ProjectionMatrix);
     m_DefaultShader->SetCamera("u_Camera", *m_Camera);
     m_DefaultShader->SetLightingModel(*m_LightingModel);
+    //m_DefaultShader->SetInt("u_NumLights", m_LightingModel->GetNumLights());
 
     //m_ModelMatrix = m_Cube->m_ModelMatrix;
     //m_DefaultShader->SetMat4("u_ModelMatrix", m_ModelMatrix);
     m_TableModel->RenderTable(m_DefaultShader);
     //m_Cube->Render(m_DefaultShader);
-    
+
+
     // Render Skybox
     glUseProgram(m_SkyboxShader->GetId());
     glm::mat4 skyBoxView = glm::mat4(glm::mat3(m_Camera->GetViewMatrix()));
@@ -254,7 +248,8 @@ void MainApp::RenderFrame()
     // Print out all debug info
     m_Console->Render("DEBUG", m_FPS,
         m_Camera->m_Position.x, m_Camera->m_Position.y, m_Camera->m_Position.z,
-        m_Camera->m_Yaw, m_Camera->m_Pitch);
+        m_Camera->m_Yaw, m_Camera->m_Pitch, m_TableModel->GetNumPinballs());
+
 
     // Swap buffers
     SDL_GL_SwapWindow(m_SDLWindow);

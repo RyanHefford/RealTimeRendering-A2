@@ -5,6 +5,8 @@
 //-----------------------------------------------------------------------------
 #pragma once
 #include <glm/glm.hpp>
+#include "RTRTexture.h"
+#include "RTRCubeMapTexture.h"
 
 constexpr auto RTR_MAX_LIGHTS = 10;
 
@@ -13,6 +15,15 @@ enum class RTRLightType : int
     DirectionalLight = 0,
     PointLight,
     SpotLight
+};
+
+enum class RTRMaterialType : int
+{
+    BasicMaterial = 0,
+    TexturedMaterial,
+    ReflectiveMaterial,
+    GlassMaterial,
+    SkyboxMaterial
 };
 
 // TODO: Support for spot lights
@@ -33,11 +44,18 @@ struct RTRLight_t
 
 struct RTRMaterial_t
 {
-    glm::vec3 Ambient;
-    glm::vec3 Diffuse;
-    glm::vec3 Specular;
-    float Shininess;
+    RTRMaterialType Type;           // Used by material type
+    glm::vec3 Ambient;              // Basic, Textured, Reflective, Glass
+    glm::vec3 Diffuse;              // Basic, Textured, Reflective, Glass
+    glm::vec3 Specular;             // Basic, Textured, Reflective, Glass
+    float Shininess;                // Basic, Textured, Reflective, Glass
+    RTRTexture* DiffuseMap;        // Textured, Reflective, Glass
+    RTRTexture* SpecularMap;       // Textured, Reflective, Glass
+    RTRTexture* ReflectionMap;     // Reflective, Glass
+    float RefractiveIndex;          // Glass
+    RTRCubeMapTexture* CubeMap;
 };
+
 
 class RTRLightingModel
 {

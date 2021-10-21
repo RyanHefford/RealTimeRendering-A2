@@ -29,6 +29,18 @@ void RTRCubeMapTexture::LoadTexture(const char** path)
 		}
 		stbi_image_free(data);
 	}
+	Unbind();
+}
+
+void RTRCubeMapTexture::Bind(int index)
+{
+	glActiveTexture(GL_TEXTURE0 + index);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_Id);
+}
+
+void RTRCubeMapTexture::Unbind()
+{
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
 RTRCubeMapTexture::~RTRCubeMapTexture() {

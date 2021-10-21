@@ -1,6 +1,6 @@
 #include "RTRSkyBox.h"
 
-RTRSkyBox::RTRSkyBox(unsigned int texId) : RTRObject(texId)
+RTRSkyBox::RTRSkyBox(RTRMaterial_t* material) : RTRObject(material)
 {
 
     m_NumVertices = 8;
@@ -48,9 +48,8 @@ void RTRSkyBox::Init()
 void RTRSkyBox::Render(RTRShader* shader)
 {
     glDepthFunc(GL_LEQUAL);
-    shader->SetInt("u_SkyboxTextureId", 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureId);
+    shader->SetInt("u_SkyboxTextureId", 15);
+    m_Material->CubeMap->Bind(15);
     glBindVertexArray(m_VertexArray);
     glDrawElements(GL_TRIANGLES, 3 * m_NumFaces, GL_UNSIGNED_INT, 0);
     glDepthFunc(GL_LESS);

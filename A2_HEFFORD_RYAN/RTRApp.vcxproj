@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Include\glad\glad.c" />
     <ClCompile Include="Src\RTRCubeMapTexture.cpp" />
+    <ClCompile Include="Src\RTRModel.cpp" />
     <ClCompile Include="Src\RTRObject.cpp" />
     <ClCompile Include="Src\Console.cpp" />
     <ClCompile Include="Src\RTRApp.cpp" />
@@ -34,6 +35,7 @@
   <ItemGroup>
     <ClInclude Include="Src\RTRCamera.h" />
     <ClInclude Include="Src\RTRCubeMapTexture.h" />
+    <ClInclude Include="Src\RTRModel.h" />
     <ClInclude Include="Src\RTRObject.h" />
     <ClInclude Include="Src\Console.h" />
     <ClInclude Include="Src\MainApp.h" />
@@ -80,8 +82,16 @@
     <None Include="Src\RTRSkybox.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Src\MetalTexture.jpg" />
-    <Image Include="Src\PaintedWoodTexture.png" />
+    <Image Include="Resources\Textures\Glass.png" />
+    <Image Include="Resources\Textures\MetalTexture.jpg" />
+    <Image Include="Resources\Textures\PaintedWoodTexture.png" />
+    <Image Include="Resources\Textures\Skybox\negx.jpg" />
+    <Image Include="Resources\Textures\Skybox\negy.jpg" />
+    <Image Include="Resources\Textures\Skybox\negz.jpg" />
+    <Image Include="Resources\Textures\Skybox\posx.jpg" />
+    <Image Include="Resources\Textures\Skybox\posy.jpg" />
+    <Image Include="Resources\Textures\Skybox\posz.jpg" />
+    <Image Include="Resources\Textures\UsedMetal.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -51,6 +51,9 @@
     <ClCompile Include="Src\RTRSkyBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Src\RTRModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\RTRApp.h">
@@ -89,6 +92,9 @@
     <ClInclude Include="Src\RTRSkyBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Src\RTRModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\RTRDefault.vert">
@@ -114,10 +120,34 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Src\MetalTexture.jpg">
+    <Image Include="Resources\Textures\MetalTexture.jpg">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Src\PaintedWoodTexture.png">
+    <Image Include="Resources\Textures\PaintedWoodTexture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Textures\UsedMetal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Textures\Skybox\negx.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Textures\Skybox\negy.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Textures\Skybox\negz.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Textures\Skybox\posx.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Textures\Skybox\posy.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Textures\Skybox\posz.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Textures\Glass.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
